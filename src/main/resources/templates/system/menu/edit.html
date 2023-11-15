@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<style type="text/css">
+	.layui-form-item{
+		margin: 20px 100px 10px 45px;
+	}
+</style>
+<form class="layui-form" action="save" method="post" lay-filter="stuform" style="margin-bottom: 20px;">
+	<input type="hidden" name="id" data-th-value="${model.id}">
+	<input type="hidden" name="isUsed" data-th-value="${model.isUsed}">
+	<input type="hidden" name="createName" data-th-value="${model.createName}">
+	<input type="hidden" name="createDate" data-th-value="${model.createDate}">
+	<input type="hidden" name="parentId" th:value="${model.parent==null?null:model.parent.id}">
+	
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称：</label>
+		<div class="layui-input-block">
+			<input type="text" name="name" th:value="${model.name}" class="layui-input" />
+		</div>
+	</div>
+	<div class="layui-form-item">
+   		<label class="layui-form-label">权限：</label>
+   		<div class="layui-input-block">
+			<select name="role.id">
+				<option value="" style="display: none;"></option>
+				<option th:each="c:${roles}" th:value="${c.id}" th:text="${c.name}" th:selected="${model.role==c}"></option>
+			</select>
+   		</div>
+ 	</div>
+	<div class="layui-form-item" >
+		<label class="layui-form-label">地址：</label>
+		<div class="layui-input-block">
+			<input type="text" name="url" th:value="${model.url}" class="layui-input" />
+		</div>
+	</div>
+	<div class="layui-form-item" >
+		<label class="layui-form-label">排序：</label>
+		<div class="layui-input-block">
+			<input type="text" name="idx" th:value="${model.idx}" class="layui-input" />
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+	form = layui.form;
+	form.render('select');
+</script>

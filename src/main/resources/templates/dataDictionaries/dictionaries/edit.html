@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<style type="text/css">
+	.layui-form-item{
+		margin: 20px 60px 10px 45px;
+	}
+	.layui-form-label{
+		width: 100px;
+	}
+</style>
+<form class="layui-form" action="save" method="post" lay-filter="stuform">
+	<input type="hidden" name="id" th:value="${model.id}">
+	<div class="layui-form-item">
+		<label class="layui-form-label">字典名称：</label>
+		<div class="layui-input-block">
+			<input type="text" name="name" th:value="${model.name}" class="layui-input" />
+		</div>
+	</div>
+	<div class="layui-form-item" >
+		<label class="layui-form-label">字典代码：</label>
+		<div class="layui-input-block">
+			<input type="text" name="code" th:value="${model.code}" class="layui-input" />
+		</div>
+	</div>
+</form>

@@ -1,0 +1,142 @@
+<meta charset="UTF-8">
+<style type="text/css">
+	#home{
+		padding: 40px;
+		margin-bottom: 40px;
+		opacity: 1;
+	}
+	.note-editable{
+		height: 800px;
+	}
+</style>
+<div class="mcy_body">
+	<div id="home">
+		<ul class="breadcrumb">
+			<li><span class="glyphicon glyphicon-home"></span>&emsp;当前位置：</li>
+			<li class="active">写美食	</li>
+		</ul>
+		<div class="form-horizontal" role="form" >
+			<div class="form-group">
+				<input id="blog_title" class="form-control" type="text" name="title" th:value="${model.title}" placeholder="请输入美食标题" />
+				<input id="blog_id" type="hidden" th:value="${model.id}" />
+			</div>
+			<div class="form-group">
+				<textarea id="summernote" class="summernote" name="text" th:text="${model.text}"></textarea>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">文章类型：</label>
+				<div class="col-sm-4">
+					<select class="form-control" id="blog_textType" name = "textType">
+						<option th:each="c:${type}" th:value="${c.name}" th:text="${c.name}" th:selected="${model.textType==c.name}"></option>
+					</select>
+				</div>
+				<label class="col-sm-2 control-label">美食分类：</label>
+				<div class="col-sm-4">
+					<select class="form-control" id="blog_classify" name = "classify">
+						<option th:each="c:${sf}" th:value="${c.name}" th:text="${c.name}" th:selected="${model.classify==c.name}"></option>
+					</select>
+				</div>
+			</div><br>
+			<div class="form-group">
+				<div class="col-sm-8 col-sm-offset-2">
+					<button type="button" class="btn btn-primary" onclick="issue('待审核')">发布美食</button>
+					<button type="button" class="btn btn-primary" onclick="issue('草稿')">保存为草稿</button>
+					<button type="button" class="btn btn-primary" onclick="return_blog()">返回</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(function() {
+		$('.summernote').summernote({
+			height: 'full-230',
+			tabsize : 2,
+			lang : 'zh-CN',
+			// 图片上传
+			callbacks : {
+				// summernote提供的API：onImageUpload
+				onImageUpload : function(files) {
+					
+					var formData = new FormData();
+		            formData.append("file", files[0]);
+					$.ajax({
+						url : 'upload', //后台文件上传接口
+						type : 'POST',
+						data : formData,
+						processData : false,//告诉jQuery不要加工数据
+						contentType : false,//告诉jQuery,在request head里不要设置Content-Type
+						success : function(data) {
+							$("#summernote").summernote('insertImage', data, 'img');
+						},
+						error : function() {
+							alert("上传失败")
+						}
+					})
+				},
+				onPaste: function (ne) {
+	                  	var bufferText = ((ne.originalEvent || ne).clipboardData || window.clipboardData).getData('Text/plain');
+	                   ne.preventDefault ? ne.preventDefault() : (ne.returnValue = false);
+	                   setTimeout(function () {
+	                        document.execCommand("insertText", false, bufferText);
+	                   }, 10);
+				}
+			}
+		});
+		$(".note-insert button:nth-child(3)").remove();
+		$(".note-view button:nth-child(1)").remove();
+	});
+	
+	function return_blog(){
+		$("#main").load("blog/manage");
+	}
+	
+	function issue(str){
+		var summernote = $('#summernote').summernote('code');	//获取编辑器里边的内容
+		summernote = ""+summernote+"";
+		console.log(summernote);
+		var title = $("#blog_title").val();
+		var textType = $("#blog_textType").val();
+		var classify = $("#blog_classify").val();
+		var id = $("#blog_id").val();
+		if(title == null || title == ""){
+			layui.use('layer', function(){
+				layer.msg("请输入标题");
+			})
+		}else{
+			$.post("blog/save", {title: title, text: summernote, textType:textType, classify: classify, blogStatic: str, id: id}, function(data){
+				if(data.success){
+					if(str == '草稿'){
+						bootbox.alert("保存成功！");
+						$("#main").load("blog/edit");
+					}else{
+						bootbox.confirm({
+							buttons : {
+								confirm : {
+									label : '查看发布文章',
+									className : 'btn-myStyle'
+								},
+								cancel : {
+									label : '在写一篇',
+									className : 'btn-default'
+								}
+							},
+							message : '发布成功',
+							callback : function(result) {
+								if (result) {
+									$("#main").load("blog/edit");
+									window.open("blog/visit?id="+data.msg);
+								} else {
+									$("#main").load("blog/edit");
+								}
+							}
+						});
+					}
+				} else {
+					bootbox.alert("数据保存失败");
+				}
+			});			
+		}
+	}
+</script>

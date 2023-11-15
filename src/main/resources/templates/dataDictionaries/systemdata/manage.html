@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../../static/layui/css/layui.css">
+<script src="../../static/js/jquery.js"></script>
+<script src="../../static/layui/layui.js"></script>
+
+</head>
+<body>
+	<input type="hidden"  id="id" th:value="${id}">
+	
+	<script type="text/html" id="toolbarDemo">
+  		<div class="layui-btn-group">
+    		<button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增</button>
+    		<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</button>
+    		<button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon">&#xe666;</i>刷新</button>
+  		</div>
+	</script>
+	
+	<table class="layui-hide" id="systemdata" lay-filter="systemdata"></table>
+	<script type="text/javascript">
+		layui.use("table", function(){
+			var table = layui.table;
+			var id = $("#id").val();
+			table.render({
+				elem:'#systemdata',
+				title:'数据字典',
+				height: 'full-40',
+				url: '../../dataDictionaries/systemData/page1?dictionaries.id='+id,
+				toolbar: '#toolbarDemo',
+				page: true,
+				cols: [ [
+					{type: 'radio', fixed: 'left'},
+					{field: 'id', title: 'ID', hide: true, usersize: true, sort: true},
+					{field: 'name', title: '字典数据'},
+					{field: 'code', title: '数据代码'}
+				] ] 
+			});
+			table.on('toolbar(systemdata)', function(obj){
+				var checkStatus = table.checkStatus('systemdata');
+				var data = checkStatus.data;
+				if(obj.event === "add"){
+					$.post("../../dataDictionaries/systemData/edit2", {id2: id}, function(data){
+						layui.use('layer', function(){
+	      					layer.open({
+	      						title: '新增',
+	      						shadeClose: true,
+	    	      				shade: 0.3,
+	    	      				maxmin: true,
+	    			            area: ['500px', '260px'],
+	    			            content: data,
+	    			            btn: ['确定', '取消'],
+	    			            yes:function(){
+	    			            	var name = $("#data_name").val();
+									var code = $("#data_code").val();
+									$.post("../../dataDictionaries/systemData/save",{
+										name: name,
+										code: code,
+										dictionaries:id
+									},function(result){
+										if(result.success){
+			    			            	table.reload('systemdata', {
+											  	url: '../../dataDictionaries/systemData/page1?dictionaries.id='+id
+											});
+			    			            	$("#systemData")[0].reset();
+					      					layer.close(layer.index);
+										}
+										layer.msg(result.msg,{offset:'rb'});
+									});
+			      				},
+			      				btn2:function(){
+			      					$("#systemData")[0].reset();
+			      					layer.close(layer.index);
+			      				}
+	      					});
+						});						
+					});
+				}else if(obj.event === "delete"){
+					if(data.length != 1){
+						layer.msg('请选中一行进行删除');	
+					}else{
+						layer.confirm('确定要删除吗？', function(index) {
+				        	var id1 = data[0].id;
+				        	$.post("../../dataDictionaries/systemData/delete", {id: id1}, function(result){
+				        		if(result.success){
+					        		table.reload('systemdata', {
+									  	url: '../../dataDictionaries/systemData/page1?dictionaries.id='+id
+									});
+				        		}
+				        		layer.msg(result.msg,{offset:'rb'});
+				        	});
+				        	layer.close(index);
+			        	});
+					}
+				}else if(obj.event === "refresh"){
+	        		table.reload('systemdata', {
+					  	url: '../../dataDictionaries/systemData/page1?dictionaries.id='+id
+					});
+				}
+			});
+		});
+	</script>
+</body>
+</html>

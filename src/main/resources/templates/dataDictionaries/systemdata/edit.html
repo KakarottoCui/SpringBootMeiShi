@@ -1,0 +1,32 @@
+<meta charset="UTF-8">
+
+<style type="text/css">
+	.layui-form-item{
+		margin: 20px 60px 10px 45px;
+	}
+	.layui-form-label{
+		width: 80px;
+	}
+	.layui-input-block{
+		width: 85%;
+	}
+</style>
+<form id="systemData" action="save" method="post" class="layui-form white-bg radius">
+	<input type="hidden" name="systemDictionaries.id" th:value="${id}">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">字典数据</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" id="data_name" name="name" th:value="${model.name}">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">数据代码</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" id="data_code" name="code" th:value="${model.code}">
+			</div>
+		</div>
+	</div>
+</form>

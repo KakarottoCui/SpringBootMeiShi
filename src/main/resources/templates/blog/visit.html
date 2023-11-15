@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title th:text="${blog.title}">查看美食页面</title>
+<script src="../static/js/jquery.js"></script>
+<link rel="stylesheet" href="../webjars/layui/2.4.5/css/layui.css">
+<link rel="stylesheet" href="../webjars/bootstrap/3.3.7-1/css/bootstrap.css">
+<script type="text/javascript" src="../webjars/layui/2.4.5/layui.js"></script>
+<script type="text/javascript" src="../webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+	<style type="text/css">
+	*{
+		margin: 0px;
+		padding: 0px;
+	}
+	html, body{
+		width: 100%;
+		height: 100%;
+	}
+	.bg{
+		width: 100%;
+		height: 100%;
+		background: url(../static/img/bg.jpg) no-repeat;
+		background-size: cover;
+		position: fixed !important;
+		z-index: -1;
+		opacity: 0.7; 
+	}
+	#main{
+		width: 70%;
+		margin: 0 auto;
+		padding-top: 40px;
+		border-radius: 20px;
+		opacity: 0.7; 
+		
+	}
+	#visit_home{
+		background: white;
+		padding: 20px;
+		border-radius: 20px;
+	}
+	#visit_home .blog_title{
+		display: block;
+		font-size: 24px;
+		text-align: center;
+		margin: 20px;
+	}
+	#comment{
+		margin-top: 30px;
+		
+	}
+	#comment textarea{
+		width: 90%;
+		height: 30pox;
+	}
+	#visit_home p{
+		line-height: 25px;
+		margin-left: 20px;
+	}
+	</style>
+</head>
+<body>
+	<div class = "bg"></div>
+	<div style="width: 100%; height: 100%;">
+		<div id="main">
+			<div id="visit_home">
+				<p style="margin-left: 30px; font-size: 20px;">
+					博主：<span th:text="${blog.user.nickname}"></span>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;    
+					美食总数：<span th:text="${blog.user.blogSize}"></span>&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+					<a href="../main">返回首页</a>
+				</p>
+				<span class="blog_title" th:text="${blog.title}"></span>
+				<input type="hidden" id="id" th:value="${blog.id}">
+				<div id="blog_home" style="margin-bottom: 50px;" ></div>
+				
+				<span th:if="${comment.size() != 0}" style="font-size: 20px;">
+					评论：
+				</span>
+				<p th:each="c:${comment}">
+					<span th:text="${c.user.nickname}"></span>：<span th:text="${c.text}"></span> ( <span th:text="${c.createDate}"></span> )
+				</p>
+
+				<div sec:authorize="isAuthenticated()" th:if="${blog.blogStatic=='审核通过'}">
+					<textarea id="comment" placeholder="请输入评论内容" class="layui-textarea"></textarea><br>
+					<button type="button" style="margin-left: 40px; margin-bottom: 40px" class="layui-btn" onclick="comment()">提交评论</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript" src="../static/js/bg.js"></script>
+	<script type="text/javascript">
+		var id = $("#id").val();
+		$("#blog_home").load("../blog/blogText?id="+id);
+		
+		function comment(){
+			var comment = $("#comment").val();
+			var id = $("#id").val();
+			$.post("../blog/comment?comment="+comment+"&id="+id, function(data){
+				layui.use('layer', function(){
+					var layer = layui.layer;
+					if(data.success){
+						layer.msg("评论成功！",{offset:'rb'});
+						location.reload();
+					}else{
+						layer.msg("评论失败！",{offset:'rb'});
+					}
+				})
+			});
+		}
+	</script>
+</body>
+</html>

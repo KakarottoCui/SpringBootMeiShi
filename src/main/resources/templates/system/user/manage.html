@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<table class="layui-hide" id = "user" lay-filter="user"></table>
+<script type="text/html" id="toolbarDemo">
+  	<div class="layui-btn-group">
+    	<button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="updata"><i class="layui-icon">&#xe642;</i>修改</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="reset"><i class="layui-icon">&#xe673;</i>重置密码</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon">&#xe666;</i>刷新</button>
+  	</div>
+</script>
+<script type="text/javascript">
+	var option={
+		elem: '#user',
+		title: '用户管理',
+		path: 'system/user',
+		addurl: 'edit',
+		toolbar: '#toolbarDemo',
+		cols: [ [
+			{type:'radio', fixed: 'left'},
+			{field: 'id', hide : true, title: 'id' },
+			{field: 'name', hide : true, title: '姓名' },
+			{field: 'username', title: '账号' },
+			{field: 'nickname', title: '昵称' },
+			{field: 'roleNames', title: '角色' },
+			{field: 'site', hide : true, title: '地区' },
+			{field: 'sex', hide : true, title: '性别' },
+			{field: 'position', hide : true, title: '职位' },
+			{field: 'introduction', hide : true, title: '简介' }
+		] ]
+	}
+	var currRow="${param.currRow==null?'null':param.currRow}";
+	var classTable=new layuiTbale(option, currRow);
+	classTable.init();
+</script>

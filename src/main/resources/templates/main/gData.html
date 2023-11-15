@@ -1,0 +1,92 @@
+<meta charset="UTF-8">
+
+<style type="text/css">
+</style>
+<div class="mcy_body">
+	<div id="home">
+		<form id="g_form" class="form-horizontal bv-form cmxform" method="post">
+			<ul class="breadcrumb">
+				<li><span class="glyphicon glyphicon-home"></span>&emsp;当前位置：</li>
+				<li class="active">个人资料</li>
+			</ul>
+		
+			<input type="hidden" name="id" data-th-value="${model.id}">
+       		<input type="hidden" name="isUsed" data-th-value="${model.isUsed}">
+       		<input type="hidden" name="createName" data-th-value="${model.createName}">
+       		<input type="hidden" name="createDate" data-th-value="${model.createDate}">
+       		<input type="hidden" name="password" data-th-value="${model.password}">
+       		<input type="hidden" name="roles" data-th-value="${model.roleCodes}">
+       		<input type="hidden" name="username" data-th-value="${model.username}">
+			<div class="form-group">
+				<label for="recipient-name" class="col-sm-2 col-lg-offset-1 control-label">账号:</label>
+				<div class="col-sm-5"><input type="text" disabled="disabled" name="username" th:value="${model.username}" class="form-control"></div>
+			</div>
+			<div class="form-group aaa">
+				<label for="recipient-name" class="col-sm-2 col-lg-offset-1 control-label">昵称:</label>
+				<div class="col-sm-5"><input type="text" disabled="disabled" name="nickname" th:value="${model.nickname}" class="form-control"></div>
+			</div>
+			<div class="form-group aaa">
+				<label for="recipient-name" class="col-sm-2 col-lg-offset-1 control-label">姓名:</label>
+				<div class="col-sm-5"><input type="text" disabled="disabled" name="name" th:value="${model.name}" class="form-control"></div>
+			</div>
+			<div class="form-group aaa">
+				<label for="recipient-name" class="col-sm-2 col-lg-offset-1 control-label">地区:</label>
+				<div class="col-sm-5"><input type="text" disabled="disabled" name="site" th:value="${model.site}" class="form-control"></div>
+			</div>
+			<div class="form-group aaa">
+				<label for="recipient-name" class="col-sm-2 col-lg-offset-1 control-label">性别:</label>
+				<div class="col-sm-5">
+					<select class="form-control" disabled="disabled" name="sex">
+						<option></option>
+						<option  th:selected="${model.sex=='男'}">男</option>
+						<option  th:selected="${model.sex=='女'}">女</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group aaa">
+				<label for="recipient-name" class="col-sm-2 col-lg-offset-1 control-label">简介:</label>
+				<div class="col-sm-5"><input  disabled="disabled" type="text" name="introduction" th:value="${model.introduction}" class="form-control"></div>
+			</div>
+			<div class="form-group aaa">
+				<label for="recipient-name" class="col-sm-2 col-lg-offset-1 control-label"></label>
+				<div class="col-sm-6">
+					<button style="float: right;" onclick="g_edit()" id="g_edit2" type="button" class="btn btn-primary">编辑</button>
+					<button style="display:none; float: right;" id="g_save" onclick="g_save2()" type="button" class="btn btn-primary">保存</button>
+					<button style="display:none; float: right; margin-right: 20px;" onclick="g_cancel2()" id="g_cancel" type="button" class="btn btn-primary">取消编辑</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>	
+
+<script>
+	function g_edit(){
+		$("#home .aaa input, #home .form-group select").removeAttr("disabled");
+		$("#g_save").css({"display": ""});
+		$("#g_cancel").css({"display": ""});
+		$("#g_edit2").css({"display": "none"});
+	}
+	
+	function g_cancel2(){
+		$("#home .form-group input, #home .form-group select").attr("disabled","disabled");
+		$("#g_save").css({"display": "none"});
+		$("#g_cancel").css({"display": "none"});
+		$("#g_edit2").css({"display": ""});
+		$("#g_form")[0].reset();
+	}
+	
+	function g_save2(){
+		var data = $("#g_form").serialize();
+		$.post("system/user/save", data, function(data){
+			layui.use('layer', function(){
+				var layer = layui.layer;
+				if(data.success){
+					layer.msg("保存成功！",{offset:'rb'});
+					$("#main").load('gData');
+				}else{
+					layer.msg("保存失败！",{offset:'rb'});
+				}
+			})
+		})
+	}
+</script>

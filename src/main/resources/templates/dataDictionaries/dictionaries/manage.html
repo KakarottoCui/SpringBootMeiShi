@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+
+<style type="text/css">
+	.btn_active{
+		background: #B0C4DE;
+	}
+	.layui-form{
+		margin-top: 0px;
+	}
+</style>
+<div class="mcy_body">
+	<div id="home">
+		<ul class="breadcrumb">
+			<li><span class="glyphicon glyphicon-home"></span>&emsp;当前位置：</li>
+			<li class="active">数据字典</li>
+		</ul>
+		<table class="layui-hide" id = "dictionaries" lay-filter="dictionaries"></table>
+		<script type="text/html" id="toolbarDemo">
+  			<div class="layui-btn-group">
+    			<button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增</button>
+    			<button class="layui-btn layui-btn-sm" lay-event="updata"><i class="layui-icon">&#xe642;</i>修改</button>
+    			<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</button>
+    			<button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon">&#xe666;</i>刷新</button>
+  			</div>
+		</script>
+		<script type="text/html" id="barDemo3">
+  			<a class="layui-btn layui-btn-xs layui-btn-normal layui-icon layui-icon-set-fill" data-method="notice" lay-event="view"> 查看信息</a>
+		</script>
+		<script type="text/javascript">
+			var option={
+				elem: '#dictionaries',
+				title: '数据字典',
+				path: 'dataDictionaries/dictionaries',
+				addurl: 'edit',
+				toolbar: '#toolbarDemo',
+				cols: [ [
+					{type:'radio', fixed: 'left'},
+					{field: 'name', title: '字典名称' },
+					{field: 'code', title: '字典代码' },
+					{fixed: 'right', title: '操作', toolbar: '#barDemo3'}
+				] ]
+			}
+			var currRow="${param.currRow==null?'null':param.currRow}";
+			var classTable=new layuiTbale(option, currRow);
+			classTable.init();
+			layui.use('table', function(){
+				var table = layui.table;
+				table.on('tool(dictionaries)', function(obj){
+				    var data = obj.data;
+				    if(obj.event === 'view'){
+				    	layer.open({
+				            type: 2,
+				            title: '字典数据',
+		      				shade: 0.3,
+		      				maxmin: true,
+				            area: ['70%', '80%'],
+				            content: 'dataDictionaries/systemData/manage2?id='+obj.data.id
+				        });
+				    }
+				});
+			});
+		</script>
+	</div>
+</div>
+			

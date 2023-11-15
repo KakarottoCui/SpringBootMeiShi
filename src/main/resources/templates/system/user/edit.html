@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<body>
+<style type="text/css">
+	.layui-form-item{
+		margin: 20px 100px 10px 45px;
+	}
+	.layui-form-label{
+		width: 100px;
+	}
+</style>
+	<form class="layui-form" action="save" method="post" lay-filter="stuform">
+		<input type="hidden" name="id" data-th-value="${model.id}">
+    	<input type="hidden" name="isUsed" data-th-value="${model.isUsed}">
+    	<input type="hidden" name="createName" data-th-value="${model.createName}">
+    	<input type="hidden" name="createDate" data-th-value="${model.createDate}">
+    	<input type="hidden" name="password" data-th-value="${model.password}">
+    	<input type="hidden" name="name" data-th-value="${model.name}">
+    	<input type="hidden" name="site" data-th-value="${model.site}">
+    	<input type="hidden" name="sex" data-th-value="${model.sex}">
+    	<input type="hidden" name="position" data-th-value="${model.position}">
+    	<input type="hidden" name="introduction" data-th-value="${model.introduction}">
+	       		
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色</label>
+			<div class="layui-input-block">
+				<input id="roles" type="hidden" name="roles" th:value="${model.roleCodes}">
+				<select  multiple="multiple" lay-filter="roles">
+					<option data-th-each="role:${roles}" data-th-value="${role.code}" data-th-selected="${#strings.contains(model.roleCodes,role.code)}" data-th-text="${role.name}">用户</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">账号：</label>
+			<div class="layui-input-block">
+				<input type="text" name="username" th:value="${model.username}" class="layui-input" />
+			</div>
+		</div>
+		<div class="layui-form-item" >
+			<label class="layui-form-label">昵称：</label>
+			<div class="layui-input-block">
+				<input type="text" name="nickname" th:value="${model.nickname}" class="layui-input" />
+			</div>
+		</div>
+	</form>
+	<script type="text/javascript">
+		form = layui.form;
+		//form.render('select');
+		layui.use('multiSelect', function(){
+			var multiSelect=layui.multiSelect;
+			multiSelect.render('select');
+			form.on('select(roles)',function(data){
+				var vals="";
+				$(this).parent().children().find('div.layui-form-checked').parent().each(function(){
+					vals+=$(this).attr('lay-value')+',';
+					
+				});
+				vals=vals.length>0?vals.substring(0,vals.length-1):'';
+				$('#roles').val(vals);
+			})
+		});
+	</script>
+</body>

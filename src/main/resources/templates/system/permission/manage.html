@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<table class="layui-hide" id = "permission" lay-filter="permission"></table>
+<script type="text/html" id="toolbarDemo">
+  	<div class="layui-btn-group">
+    	<button class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="updata"><i class="layui-icon">&#xe642;</i>修改</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon">&#xe666;</i>刷新</button>
+  	</div>
+</script>
+<script type="text/javascript">
+	var option={
+		elem: '#permission',
+		title: '权限管理',
+		path: 'system/permission',
+		addurl: 'edit',
+		toolbar: '#toolbarDemo',
+		cols: [ [
+			{type:'radio', fixed: 'left'},
+			{field: 'name', title: '权限名称' },
+			{field: 'code', title: '权限代码' }
+		] ]
+	}
+	var currRow="${param.currRow==null?'null':param.currRow}";
+	var classTable=new layuiTbale(option, currRow);
+	classTable.init();
+</script>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<table class="layui-hide" id = "role" lay-filter="role"></table>
+<script type="text/html" id="toolbarDemo">
+	<div class="layui-btn-group">
+		<button class="layui-btn layui-btn-sm" lay-event="add_lay"><i class="layui-icon">&#xe654;</i>新增</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="updata_lay"><i class="layui-icon">&#xe642;</i>修改</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="delete_lay"><i class="layui-icon">&#xe640;</i>删除</button>
+    	<button class="layui-btn layui-btn-sm" lay-event="refresh_lay"><i class="layui-icon">&#xe666;</i>刷新</button>
+  	</div>
+</script>
+<script type="text/javascript">
+	layui.use(['layer', 'table', 'treetable'], function () {
+		var table = layui.table;
+		var layer = layui.layer;
+		var treetable = layui.treetable;
+		var renderTable = function(){
+			layer.load(2);
+            treetable.render({
+            	height:'full-230',
+            	id:'role',
+                treeColIndex: 1,	//树形图标显示在第几列
+                treeSpid: '0',		//最上级的父级id
+                treeIdName: 'id',	//id字段的名称
+                treePidName: 'parentId',	//pid字段的名称，父级菜单id
+                treeDefaultClose: false,	//是否默认折叠
+                treeLinkage: false,		//父级展开时是否自动展开所有子级
+                elem: '#role',	//表格id
+                url: 'system/role/treedata',
+                toolbar: '#toolbarDemo',
+                page: false,
+                cols: [ [
+                	{type:'radio', fixed: 'left'},
+                	{field: 'name', title: '名称'},
+                    {field: 'code' , title: '代码'},
+                    {field: 'idx', title: '排序'}
+                ] ],
+                //数据渲染完的回调
+                done: function () {
+                	//关闭加载
+                    layer.closeAll('loading');
+                }
+			})
+		};
+		renderTable();
+		table.on('toolbar', function(obj){
+			var checkStatus = table.checkStatus('role');
+			var data = checkStatus.data;
+			if(obj.event === 'add_lay'){
+				if(data.length > 1){
+					layer.msg("请选择一行作为父级菜单",{offset:'rb'});
+				}else{
+					var id = data.length==1?data[0].id: '';
+					$.get('system/role/edit',{parentId:id},function(data){
+						layer.open({
+							type: 1,
+							title: '新增',
+							area: ['530px', '550px'],
+							content: data,
+							btn: ['提交', '退出'],
+							success:function(layero,index){
+					    		layui.use('form',function(){
+					    			var form=layui.form;
+					    			layero.addClass('layui-form');
+					    			var submitBtn=layero.find('.layui-layer-btn0');
+					    			submitBtn.attr('lay-filter','formVerify').attr('lay-submit','');
+					    			layero.keydown(function(e){
+					    				 if(e.keyCode==13){
+					    					 submitBtn.click();
+					    				 }
+					    			 });
+					    			
+					    			form.on('submit(formVerify)',function(data){
+					    				$.post('system/role/save',data.field,function(result){
+					    					if(result.success){
+					    						layer.close(index);
+					    						//刷新，重新渲染表格
+					    						renderTable();
+					    					}
+					    					layer.msg(result.msg,{offset:'rb'});
+					    				});
+					    				return false;
+					    			});
+					    		});
+					    	}
+						})
+					});
+				}
+			}else if(obj.event === 'updata_lay'){
+				if(data.length != 1){
+					layer.msg("请选择一行进行编辑",{offset:'rb'});
+				}else{
+					var id = data[0].id;
+					$.get('system/role/edit',{id:id},function(data){
+						layer.open({
+							type: 1,
+							title: '新增',
+							area: ['530px', '550px'],
+							content: data,
+							btn: ['提交', '退出'],
+							success:function(layero,index){
+					    		layui.use('form',function(){
+					    			var form=layui.form;
+					    			layero.addClass('layui-form');
+					    			var submitBtn=layero.find('.layui-layer-btn0');
+					    			submitBtn.attr('lay-filter','formVerify').attr('lay-submit','');
+					    			layero.keydown(function(e){
+					    				 if(e.keyCode==13){
+					    					 submitBtn.click();
+					    				 }
+					    			 });
+					    			
+					    			form.on('submit(formVerify)',function(data){
+					    				$.post('system/role/save',data.field,function(result){
+					    					if(result.success){
+					    						layer.close(index);
+					    						//刷新，重新渲染表格
+					    						renderTable();
+					    					}
+					    					layer.msg(result.msg,{offset:'rb'});
+					    				});
+					    				return false;
+					    			});
+					    		});
+					    	}
+						})
+					});
+				}
+			}else if(obj.event === "delete_lay"){
+				if(data.length != 1){
+					layer.msg("请选择一行进行编辑",{offset:'rb'});
+				}else{
+					var id = data[0].id;
+					layer.confirm('真的删除选定行的数据吗?', function(index){
+						$.post('system/role/delete',{id:id},function(result){
+							if(result.success){
+								layer.close(index);
+								renderTable();
+							}
+							layer.msg(result.msg,{offset:'rb'});
+						});
+					});
+				}
+			}else if(obj.event === "refresh_lay"){
+				renderTable();
+			}
+		});
+	});
+</script>

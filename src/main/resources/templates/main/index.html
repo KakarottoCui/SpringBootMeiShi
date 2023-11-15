@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>美食展示网</title>
+<link rel="stylesheet" href="static/layui/css/layui.css">
+<link href="static/dist/summernote.css" rel="stylesheet"/>
+<script type="text/javascript" src="static/layui/layui.js"></script>
+<link rel="stylesheet" href="webjars/bootstrap/3.3.7-1/css/bootstrap.css">
+<script type="text/javascript" src="static/js/jquery.js"></script>
+<script type="text/javascript" src="static/js/vue.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+<script type="text/javascript" src="webjars/bootbox/4.4.0/bootbox.js"></script>
+<script type="text/javascript" src="static/js/LayuiDataGrid.js"></script>
+<script src="static/dist/summernote.js"></script>
+<script src="static/dist/lang/summernote-zh-CN.js"></script>
+<style type="text/css">
+	*{
+		margin: 0px;
+		padding: 0px;
+	}
+	.bg{
+		width: 100%;
+		height: 100%;
+		background: url(static/img/bg.jpg) no-repeat;
+		background-size: cover;
+		position: fixed !important;
+		z-index: -1;
+		opacity: 0.8;
+	}
+	.mcy_header{
+		height: 60px;
+		line-height: 60px;
+		font-size: 24px;
+		color: white;
+		position: fixed;
+		width: 100%;
+		transition: background-color 0.6s ease-in-out 0s, color 0.6s ease-in-out 0s;
+		z-index: 2;
+	}
+	.header_bg{
+		color: #000;
+		background-color: white; 
+		transition: background-color 0.6s ease-in-out 0s, color 0.6s ease-in-out 0s;
+		border-bottom: 1px solid #99FFFF;
+	}
+	.mcy_nav li{
+		float: left;
+		list-style:none;
+		padding: 0 5px;
+		margin-left: 10px;
+	}
+	.mcy_nav li a{
+		text-decoration:none;
+		position: relative;
+		text-align: center;
+		font-size: 15px;
+		color: white;
+	}
+	.header_bg li a{
+		color: #000;
+		transition: color 0.6s ease-in-out 0s;
+	}
+	.mcy_nav .active a, .mcy_nav li:hover a{
+		color: blueviolet;
+	}
+	.mcy_layout_left{
+		float: left;
+		margin-left: 3%;
+	}
+	.mcy_layout_right{
+		float: right;
+	}
+	.mcy_body{
+		width: 85%; 
+		margin: 0 auto; 
+		padding-top: 80px;
+	}
+	#home{
+		background: white;
+		padding: 20px;
+		border-radius: 10px;
+		opacity: 0.7;
+	}
+	.layui-layer-page{
+		opacity: 0.8;
+	}
+	.layui-form-item{
+		margin-left: 47px;
+	}
+	#register span{
+		width: 263px;
+		height: 50px;
+		line-height: 50px;
+		font-size: 20px;
+		box-sizing:border-box;
+		-moz-box-sizing:border-box;
+		-webkit-box-sizing:border-box;
+		display: inline-block;
+		text-align: center;
+	}
+	#register span:hover {
+		cursor: pointer;
+	}
+	.con{
+		background: #CCFFFF;
+	}
+	.layui-form{
+		margin-top: 30px;
+	}
+	.layui-form-item button{
+		margin-left: 80px;
+		margin-top: 15px;
+		width: 250px;
+	}
+	#sysm h3{
+		font-size: 20px;
+		padding:10px;
+	}
+	#sysm p{
+		padding-left: 30px;
+	}
+	.layui-layer-title{
+		background: #c5eeed;
+	}
+</style>
+</head>
+<body>
+	<div class = "bg"></div>
+	
+	<div class="mcy_header">
+		<ul class="mcy_nav mcy_layout_left">
+			<li class="mcy_nav_item">
+				<i class="layui-icon" style="font-size: 24px;">&#xe857;</i>
+				中国传统美食展示网
+			</li>
+		</ul>
+		<ul class="mcy_nav mcy_layout_right" style="margin-right: 3%">
+			<li class="mcy_nav_item active" onclick="pageView('sy', this)">
+				<a href="#">首页</a>
+			</li>           
+			<li class="mcy_nav_item" onclick="pageView('blog/indexBlog', this)">
+				<a href="#">美食</a>
+			</li>
+			<li class="mcy_nav_item" onclick="pageView('gy', this)">
+				<a href="#">关于</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAnonymous()" onclick="sysm()">
+				<a href="#">使用说明</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()" onclick="pageView('blog/edit', this)">
+				<a href="#">写美食</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()" onclick="pageView('blog/manage', this)">
+				<a href="#">我的美食</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()" onclick="pageView('blog/audit', this)">
+				<a href="#">美食审核</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()" onclick="pageView('dataDictionaries', this)">
+				<a href="#">数据字典</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()" onclick="pageView('system', this)">
+				<a href="#">系统管理</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()" onclick="pageView('gData', this)">
+				<a href="#">个人资料</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()" onclick="pageView('updataPassword', this)">
+				<a href="#">修改密码</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()">
+				<a href="logout">退出</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAnonymous()" onclick="register(1)">
+				<a href="#">登录</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()">
+				<a href="#">
+					欢迎您：
+					<span sec:authorize="hasRole('ADMIN')">开发者</span>
+					<span sec:authorize="!hasRole('ROLE_ADMIN')" sec:authentication="principal.name"></span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	
+	<div id = "main">
+		
+	</div>
+	
+	<div id="register" style="display: none;">
+		<span @click.prevent="flag=true" :class="!flag?'con': ''" >登陆</span>
+		<span @click.prevent="flag=false" :class="flag?'con': ''" >注册</span>
+		
+		<login v-if="flag"></login>
+		<register2 v-else="flag"></register2>
+	</div>
+	
+	<template id="login">
+		<div>
+			<form class="layui-form" action="login" method="post">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">账号：</label>
+						<div class="layui-input-block">
+							<input type="text" class="layui-input" style="width: 250px;" required lay-verify="required" name="username" placeholder="请输入账号" value="">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">密码：</label>
+						<div class="layui-input-block">
+							<input type="password" class="layui-input" style="width: 250px;" required lay-verify="required" name="password" placeholder="请输入密码" value="">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<button class="layui-btn layui-btn-radius layui-btn-normal" lay-submit lay-filter="formDemo">登录</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</template>
+	
+	<template id="register2">
+		<div>
+			<form class="layui-form" id="b_myform" action="" method="post">
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">账号：</label>
+						<div class="layui-input-block">
+							<input type="text" class="layui-input" style="width: 250px;" name="username" placeholder="请输入账号">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">密码：</label>
+						<div class="layui-input-block">
+							<input type="password" class="layui-input" style="width: 250px;" name="password" placeholder="请输入密码">
+						</div>
+					</div>            
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">昵称：</label>
+						<div class="layui-input-block">
+							<input type="text" class="layui-input" style="width: 250px;" name="nickname" placeholder="请输入验昵称">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<button class="layui-btn layui-btn-radius layui-btn-normal" onclick="register3()" type="button">注册</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</template>
+	
+	<div style="display: none" id="sysm">
+		<h3>游客(不用登陆)：</h3>
+		<p>可以查看美食，注册账号等功能</p>
+		<h3>用户：</h3>
+		<p>可以查看美食，写美食(写美食需要审核)，对自己的美食进行管理，修改个人信息，修改密码等功能。</p>
+		<h3>管理员：</h3>
+		<p>可以查看美食，写美食(写美食需要审核)，对自己的美食进行管理，审核美食，系统设置，修改个人信息，修改密码等功能。</p>
+		<h3>特别提示：</h3>
+		<p>用户默认密码为：123456，管理员重置密码后密码为：123456</p>
+	</div>
+	
+	<script type="text/javascript" src="static/js/bg.js"></script>
+	<script type="text/javascript">
+		$("#main").load("sy");
+	
+		function pageView(url, that){
+			$(".mcy_nav_item").removeClass('active');
+			$(that).addClass('active');
+			$("#main").load(url);
+		}
+	
+		function register(str){
+			layui.use("layer", function(){
+				var layer = layui.layer;
+				layer.open({
+				  	type: 1,
+				  	title: 'BLOG',
+				  	shadeClose: false,
+				  	area: ['530px', '400px'],
+				  	content: $('#register')
+				});
+			})
+		}
+		
+		function sysm(){
+			layui.use("layer", function(){
+				var layer = layui.layer;
+				layer.open({
+				  	type: 1,
+				  	title: '使用说明',
+				  	shadeClose: false,
+				  	area: ['530px', '500px'],
+				  	content: $('#sysm')
+				});
+			})
+		}
+		
+		function register3(){
+			var data = $("#b_myform").serialize();
+			$.post("system/user/save1", data, function(data){
+				layui.use('layer', function(){
+					var layer = layui.layer;
+					if(data.success){
+						layer.msg("注册成功！",{offset:'rb'});
+					}else{
+						layer.msg("此账号已注册！",{offset:'rb'});
+					}
+				})
+			})
+			return false;
+		}
+		
+		//引入自定义插件路径
+		layui.config({
+			base : 'static/layui/'
+		}).extend({
+			treetable : 'treetable-lay/treetable',
+			multiSelect : 'lay/modules/multiSelect'
+		});
+		
+		layui.use('form', function(){
+		  	var form = layui.form;
+		  	
+			//监听提交，点击提交成功后的函数
+			form.on('submit(formDemo)', function(data){
+				
+			});
+		});
+		
+		bootbox.setDefaults({
+			locale:'zh_CN',		//设置字符集
+			size: 'small',		//设置大小
+			title:'提示'			//标题提示
+		});
+	
+		$("body")[0].onscroll=function(){
+			if($(window).scrollTop() > 120){
+				$(".mcy_header").addClass("header_bg");
+			}else{
+				$(".mcy_header").removeClass("header_bg");
+			}
+		}
+		
+		Vue.component('login', {
+			template: '#login'
+		})
+		
+		Vue.component('register2', {
+			template: '#register2'
+		})
+		
+		var vm = new Vue({
+			el: '#register',
+			data: {
+				flag: true
+			},
+			methods: {}
+		})
+	</script>
+</body>
+</html>

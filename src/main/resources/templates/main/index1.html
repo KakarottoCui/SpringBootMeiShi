@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>美食展示网</title>
+<link rel="stylesheet" href="static/layui/css/layui.css">
+<link href="static/dist/summernote.css" rel="stylesheet"/>
+<script type="text/javascript" src="static/layui/layui.js"></script>
+<link rel="stylesheet" href="webjars/bootstrap/3.3.7-1/css/bootstrap.css">
+<script type="text/javascript" src="static/js/jquery.js"></script>
+<script type="text/javascript" src="static/js/vue.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+<script type="text/javascript" src="webjars/bootbox/4.4.0/bootbox.js"></script>
+<script type="text/javascript" src="static/js/LayuiDataGrid.js"></script>
+<script src="static/dist/summernote.js"></script>
+<script src="static/dist/lang/summernote-zh-CN.js"></script>
+<style type="text/css">
+	*{
+		margin: 0px;
+		padding: 0px;
+	}
+	.bg{
+		width: 100%;
+		height: 100%;
+		background: url(static/img/bg.jpg) no-repeat;
+		background-size: cover;
+		position: fixed !important;
+		z-index: -1;
+		opacity: 0.8;
+	}
+	.mcy_header{
+		height: 60px;
+		line-height: 60px;
+		font-size: 24px;
+		color: white;
+		position: fixed;
+		width: 100%;
+		transition: background-color 0.6s ease-in-out 0s, color 0.6s ease-in-out 0s;
+		z-index: 2;
+	}
+	.header_bg{
+		color: #000;
+		background-color: white; 
+		transition: background-color 0.6s ease-in-out 0s, color 0.6s ease-in-out 0s;
+		border-bottom: 1px solid #99FFFF;
+	}
+	.mcy_nav li{
+		float: left;
+		list-style:none;
+		padding: 0 5px;
+		margin-left: 10px;
+	}
+	.mcy_nav li a{
+		text-decoration:none;
+		position: relative;
+		text-align: center;
+		font-size: 15px;
+		color: white;
+	}
+	.header_bg li a{
+		color: #000;
+		transition: color 0.6s ease-in-out 0s;
+	}
+	.mcy_nav .active a, .mcy_nav li:hover a{
+		color: blueviolet;
+	}
+	.mcy_layout_left{
+		float: left;
+		margin-left: 3%;
+	}
+	.mcy_layout_right{
+		float: right;
+	}
+	.mcy_body{
+		width: 85%; 
+		margin: 0 auto; 
+		padding-top: 80px;
+	}
+	#home{
+		background: white;
+		padding: 20px;
+		border-radius: 10px;
+		opacity: 0.7;
+	}
+	.layui-layer-page{
+		opacity: 0.8;
+	}
+	.layui-form-item{
+		margin-left: 47px;
+	}
+	#register span{
+		width: 263px;
+		height: 50px;
+		line-height: 50px;
+		font-size: 20px;
+		box-sizing:border-box;
+		-moz-box-sizing:border-box;
+		-webkit-box-sizing:border-box;
+		display: inline-block;
+		text-align: center;
+	}
+	#register span:hover {
+		cursor: pointer;
+	}
+	.con{
+		background: #CCFFFF;
+	}
+	.layui-form{
+		margin-top: 30px;
+	}
+	.layui-form-item button{
+		margin-left: 80px;
+		margin-top: 15px;
+		width: 250px;
+	}
+	#sysm h3{
+		font-size: 20px;
+		padding:10px;
+	}
+	#sysm p{
+		padding-left: 30px;
+	}
+	.layui-layer-title{
+		background: #c5eeed;
+	}
+</style>
+</head>
+<body>
+	<div class = "bg"></div>
+	
+	<div class="mcy_header">
+		<ul class="mcy_nav mcy_layout_left">
+			<li class="mcy_nav_item">
+				<i class="layui-icon" style="font-size: 24px;">&#xe857;</i>
+				中国传统美食展示网
+			</li>
+		</ul>
+		<ul class="mcy_nav mcy_layout_right" style="margin-right: 3%">
+			<li class="mcy_nav_item active" onclick="pageView('sy', this)">
+				<a href="#">首页</a>
+			</li>
+			
+			<li th:each="c:${menus}" class="mcy_nav_item" th:id="${c.url}" onclick="pageView(this.id, this)">
+				<a href="#" th:text="${c.name}">写美食</a>
+			</li>
+			
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()">
+				<a href="logout">退出</a>
+			</li>
+			<li class="mcy_nav_item" sec:authorize="isAuthenticated()">
+				<a href="#">
+					欢迎您：
+					<span sec:authorize="hasRole('ADMIN')">开发者</span>
+					<span sec:authorize="!hasRole('ROLE_ADMIN')" sec:authentication="principal.name"></span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	
+	<div id = "main">
+		
+	</div>
+	
+	<script type="text/javascript" src="static/js/bg.js"></script>
+	<script type="text/javascript">
+		$("#main").load("sy");
+	
+		function pageView(url, that){
+			$(".mcy_nav_item").removeClass('active');
+			$(that).addClass('active');
+			$("#main").load(url);
+		}
+	
+		function register(str){
+			layui.use("layer", function(){
+				var layer = layui.layer;
+				layer.open({
+				  	type: 1,
+				  	title: 'BLOG',
+				  	shadeClose: false,
+				  	area: ['530px', '400px'],
+				  	content: $('#register')
+				});
+			})
+		}
+		
+		function register3(){
+			var data = $("#b_myform").serialize();
+			$.post("system/user/save1", data, function(data){
+				layui.use('layer', function(){
+					var layer = layui.layer;
+					if(data.success){
+						layer.msg("注册成功！",{offset:'rb'});
+					}else{
+						layer.msg("此账号已注册！",{offset:'rb'});
+					}
+				})
+			})
+			return false;
+		}
+		
+		//引入自定义插件路径
+		layui.config({
+			base : 'static/layui/'
+		}).extend({
+			treetable : 'treetable-lay/treetable',
+			multiSelect : 'lay/modules/multiSelect'
+		});
+		
+		layui.use('form', function(){
+		  	var form = layui.form;
+		  	
+			//监听提交，点击提交成功后的函数
+			form.on('submit(formDemo)', function(data){
+				
+			});
+		});
+		
+		bootbox.setDefaults({
+			locale:'zh_CN',		//设置字符集
+			size: 'small',		//设置大小
+			title:'提示'			//标题提示
+		});
+	
+		$("body")[0].onscroll=function(){
+			if($(window).scrollTop() > 120){
+				$(".mcy_header").addClass("header_bg");
+			}else{
+				$(".mcy_header").removeClass("header_bg");
+			}
+		}
+		
+	</script>
+</body>
+</html>
