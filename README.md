@@ -3,7 +3,7 @@
 
 演示链接：https://live.csdn.net/v/343487
 
-详询 微信1：egvh56ufy7hh ，微信2：dabocode ，钉钉：chengxuyuandabo ，QQ：821898835 ，承接商业项目和毕设
+详询 微信1：egvh56ufy7hh ，微信2：dabocode ，钉钉：chengxuyuandabo ，QQ：821898835 。承接商业项目、课设、毕设和论文，包括但不限于Web、APP、小程序等，课设、毕设提供远程部署和不限次数代码解答！
 
 开发环境：
 
@@ -15,7 +15,7 @@
 
 前端：LayUI、JQuery、HTML5+CSS3、Ajax
 
-后端：SpringBoot+Spring-Data-Jpa
+后端：JAVA SpringBoot+Spring-Data-Jpa
 
 安全控件：SpringSecurity
 
